@@ -1,0 +1,134 @@
+
+.machines {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+
+  h2 {
+    margin: 0 0 12px 0;
+    font-weight: 600;
+  }
+}
+
+.no-access {
+  background: #fff4f4;
+  border: 1px solid #ffd6d6;
+  color: #a30000;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 8px 0 16px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  margin: 8px 0 16px;
+  border: 1px solid #e9e9e9;
+  border-radius: 10px;
+  background: #fafafa;
+
+  label {
+    display: inline-flex;
+    flex-direction: column;
+    font-size: 14px;
+    gap: 6px;
+
+    input[type="text"],
+    input[type="date"] {
+      padding: 8px 10px;
+      border: 1px solid #dcdcdc;
+      border-radius: 8px;
+      min-width: 220px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #9ac7ff;
+      box-shadow: 0 0 0 3px rgba(154, 199, 255, 0.25);
+    }
+  }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.states {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  .state-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    background: #f5f7fb;
+    border: 1px solid #e6eaf3;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+
+  button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #f1f1f1;
+    }
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  overflow: hidden;
+
+  th,
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+  }
+
+  th {
+    text-align: left;
+    font-weight: 600;
+    background: #fafafa;
+  }
+
+  tbody tr:hover {
+    background: #fcfcfc;
+  }
+}
+
+.no-results {
+  padding: 12px 0;
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .filters label input[type="text"],
+  .filters label input[type="date"] {
+    min-width: 0;
+    width: 100%;
+  }
+}

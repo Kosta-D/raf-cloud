@@ -1,0 +1,80 @@
+
+<div class="machines">
+  <h2>Pretraga mašina</h2>
+
+  <!-- Ako nema dozvolu za pretragu -->
+  <div *ngIf="!auth.hasPermission('SEARCH_MACHINE')" class="no-access">
+    Nemate dozvolu da pretražujete mašine.
+  </div>
+
+  <!-- Filter forma -->
+  <form *ngIf="auth.hasPermission('SEARCH_MACHINE')" (ngSubmit)="search()" class="filters">
+    <div class="row">
+      <label>
+        Naziv:
+        <input type="text" [(ngModel)]="name" name="name" placeholder="npr. Alpha" />
+      </label>
+
+      <label>
+        Tip:
+        <input type="text" [(ngModel)]="type" name="type" placeholder="npr. Database" />
+      </label>
+
+      <div class="states">
+        <span>Stanje:</span>
+        <label *ngFor="let s of stateChoices" class="state-item">
+          <input type="checkbox" [(ngModel)]="stateSelection[s]" name="state_{{s}}" />
+          {{ s }}
+        </label>
+      </div>
+    </div>
+
+    <div class="row">
+      <label>
+        Od datuma:
+        <input type="date" [(ngModel)]="from" name="from" />
+      </label>
+
+      <label>
+        Do datuma:
+        <input type="date" [(ngModel)]="to" name="to" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button type="submit">Pretraži</button>
+      <button type="button" (click)="clearFilters()">Očisti filtere</button>
+    </div>
+  </form>
+
+  <div *ngIf="auth.hasPermission('SEARCH_MACHINE')">
+    <table class="table" *ngIf="results?.length; else noResults">
+      <thead>
+      <tr>
+        <th>Naziv</th>
+        <th>Tip</th>
+        <th>Opis</th>
+        <th>Vlasnik (ID)</th>
+        <th>Kreirana</th>
+        <th>Power</th>
+        <th>State</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let m of results">
+        <td>{{ m.name }}</td>
+        <td>{{ m.type || '—' }}</td>
+        <td>{{ m.description || '—' }}</td>
+        <td>{{ m.ownerUserId }}</td>
+        <td>{{ m.createdAt | date:'short' }}</td>
+        <td>{{ m.power }}</td>
+        <td>{{ m.state }}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noResults>
+      <div class="no-results">Nema rezultata za zadate filtere.</div>
+    </ng-template>
+  </div>
+</div>

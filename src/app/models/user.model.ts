@@ -1,8 +1,12 @@
-export type Permission =
-  | "CREATE_USER"
-  | "READ_USER"
-  | "UPDATE_USER"
-  | "DELETE_USER";
+import { MachinePermission } from './machine.model';
+
+export type UserPermission =
+  | 'READ_USER'
+  | 'CREATE_USER'
+  | 'UPDATE_USER'
+  | 'DELETE_USER';
+
+export type Permission = UserPermission | MachinePermission;
 
 export interface User {
   id: number;

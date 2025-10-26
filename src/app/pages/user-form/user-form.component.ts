@@ -16,11 +16,18 @@ export class UserFormComponent implements OnInit {
     lastName: '',
     email: '',
     password: '',
-    permissions: []
+    permissions: [] as Permission[]
   };
 
   isEditMode = false;
-  allPermissions: Permission[] = ['CREATE_USER', 'READ_USER', 'UPDATE_USER', 'DELETE_USER'];
+  allPermissions: Permission[] = [
+
+    'CREATE_USER', 'READ_USER', 'UPDATE_USER', 'DELETE_USER',
+
+    'SEARCH_MACHINE', 'CREATE_MACHINE', 'START_MACHINE',
+    'STOP_MACHINE', 'RESTART_MACHINE', 'DESTROY_MACHINE'
+
+  ];
 
   constructor(
     private userService: UserService,

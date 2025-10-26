@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from './user.service';//trenunto
-import { User } from '../models/user.model';//trenutno
+import { UserService } from './user.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,21 +10,21 @@ export class AuthService {
   private readonly USER_KEY = 'loggedUser';
 
   constructor(private router: Router,
-              private userService: UserService//trenutno
+              private userService: UserService
   ) {}
 
   login(email: string, password: string): boolean {
     const user = this.userService.getUsers().find(
       u => u.email === email && u.password === password
-    );//trenutno
+    );
     if (user) {
-      const token = 'fake-jwt-token'; // simulacija tokena
+      const token = 'fake-jwt-token';
       localStorage.setItem(this.TOKEN_KEY, token);
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));
       return true;
     }
 
-    return false; // pogrešan email/lozinka
+    return false;
 /*
     if (email === 'admin@example.com' && password === 'admin123') {
       const token = 'fake-jwt-token';

@@ -1,5 +1,13 @@
 <nav class="navbar" *ngIf="authService.isLoggedIn()">
   <span>Dobrodosao, {{ authService.getLoggedUser()?.email }}</span>
+
+  <a *ngIf="authService.hasPermission('READ_USER')" routerLink="/users" routerLinkActive="active">Users</a>
+  <a *ngIf="authService.hasPermission('SEARCH_MACHINE')" routerLink="/machines" routerLinkActive="active">Machines</a>
+  <a *ngIf="authService.hasPermission('CREATE_MACHINE')" routerLink="/machines/new" routerLinkActive="active">New Machine</a>
+  <a routerLink="/errors" routerLinkActive="active">Errors</a>
+
+
+
   <button (click)="logout()">Odjava</button>
 </nav>
 

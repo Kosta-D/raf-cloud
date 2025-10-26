@@ -1,0 +1,19 @@
+<div class="machine-form">
+  <h2>Napravi mašinu</h2>
+
+  <div *ngIf="!auth.hasPermission('CREATE_MACHINE')" class="no-access">
+    Nemate dozvolu da pravite mašine.
+  </div>
+
+  <form *ngIf="auth.hasPermission('CREATE_MACHINE')" (ngSubmit)="submit()">
+    <label>
+      Naziv:
+      <input type="text" [(ngModel)]="name" name="name" required placeholder="npr. Nova VM" />
+    </label>
+
+    <div class="actions">
+      <button type="submit">Kreiraj</button>
+      <a routerLink="/machines">Otkaži</a>
+    </div>
+  </form>
+</div>

@@ -13,7 +13,8 @@ export class UserService {
       lastName: 'Dopudja',
       email: 'kosta@example.com',
       password: '12345',
-      permissions: ['CREATE_USER', 'READ_USER', 'UPDATE_USER', 'DELETE_USER']
+      permissions: ['READ_USER', 'CREATE_USER', 'UPDATE_USER', 'DELETE_USER', 'SEARCH_MACHINE', 'CREATE_MACHINE']
+
     },
     {
       id: 2,
