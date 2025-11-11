@@ -1,0 +1,26 @@
+<div class="errors">
+  <h2>Istorija grešaka</h2>
+
+  <div *ngIf="!logs?.length" class="no-results">
+    Nema zabeleženih grešaka za vaše mašine.
+  </div>
+
+  <table class="table" *ngIf="logs?.length">
+    <thead>
+    <tr>
+      <th>Vreme</th>
+      <th>Mašina</th>
+      <th>Operacija</th>
+      <th>Poruka</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let e of logs">
+      <td>{{ e.when | date:'short' }}</td>
+      <td>{{ e.machineName || e.machineId }}</td>
+      <td>{{ e.operation }}</td>
+      <td>{{ e.message }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

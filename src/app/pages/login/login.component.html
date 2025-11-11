@@ -1,0 +1,14 @@
+<div class="login-container">
+  <h2>Пријава</h2>
+  <form (ngSubmit)="onLogin()">
+    <label>Имејл:</label>
+    <input type="email" [(ngModel)]="email" name="email" required />
+
+    <label>Лозинка:</label>
+    <input type="password" [(ngModel)]="password" name="password" required />
+
+    <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
+    <button type="submit">Пријави се</button>
+  </form>
+</div>

@@ -1,0 +1,46 @@
+<div class="users-container">
+  <h2> Spisak korisnika</h2>
+
+  <div class="add-user-btn" *ngIf="authService.hasPermission('CREATE_USER')">
+    <button (click)="goToAddUser()" class="add-btn">Додај новог</button>
+  </div>
+
+  <div *ngIf="!authService.hasPermission('READ_USER')" class="no-access">
+    <p>Nemate dozvolu za prikaz korisnika.</p>
+  </div>
+
+  <table *ngIf="authService.hasPermission('READ_USER')">
+    <thead>
+    <tr>
+      <th>Ime</th>
+      <th>Prezime</th>
+      <th>Email</th>
+      <th>Dozvole</th>
+      <th>Akcije</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.firstName }}</td>
+      <td>{{ user.lastName }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.permissions.join(', ') }}</td>
+      <td class="actions">
+        <button
+          class="edit-btn"
+          *ngIf="authService.hasPermission('UPDATE_USER')"
+          (click)="editUser(user.id)">
+          Izmeni
+        </button>
+
+        <button
+          class="delete-btn"
+          *ngIf="authService.hasPermission('DELETE_USER')"
+          (click)="deleteUser(user.id)">
+          Obrisi
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
