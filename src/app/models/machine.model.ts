@@ -7,8 +7,7 @@ export type MachinePermission =
   | 'RESTART_MACHINE'
   | 'DESTROY_MACHINE';
 
-export type MachineState = 'Slobodna' | 'Zauzeta';
-export type PowerState = 'Upaljena' | 'Ugašena';
+export type MachineState = 'Upaljena' | 'Ugašena';
 
 
 export interface Machine {
@@ -19,6 +18,5 @@ export interface Machine {
   createdAt: string;
   active: boolean;
   state: MachineState;
-  power: PowerState;
   type?: string; // polje za tip masine
 }

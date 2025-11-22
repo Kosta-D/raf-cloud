@@ -11,8 +11,12 @@ import { AuthService } from '../../services/auth.service';
 export class MachinesComponent implements OnInit {
   name = '';
   type = ''; // za tip masine
-  stateChoices: MachineState[] = ['Slobodna', 'Zauzeta'];
-  stateSelection: Record<MachineState, boolean> = { Slobodna: false, Zauzeta: false };
+  stateChoices: MachineState[] = ['Upaljena', 'Ugašena'];
+  stateSelection: { [key in MachineState]: boolean } = {
+    Upaljena: false,
+    Ugašena: false
+  };
+
   from = '';
   to = '';
 
@@ -55,7 +59,7 @@ export class MachinesComponent implements OnInit {
     this.type = ''; //za tip masine
     this.from = '';
     this.to = '';
-    this.stateSelection = { Slobodna: false, Zauzeta: false };
+    this.stateSelection = { Upaljena: false, Ugašena: false };
     this.search();
   }
 }

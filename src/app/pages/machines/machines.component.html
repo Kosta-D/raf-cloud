@@ -7,7 +7,7 @@
     Nemate dozvolu da pretražujete mašine.
   </div>
 
-  <!-- Filter forma -->
+  <!-- forma za pretragu mašina -->
   <form *ngIf="auth.hasPermission('SEARCH_MACHINE')" (ngSubmit)="search()" class="filters">
     <div class="row">
       <label>
@@ -47,34 +47,52 @@
     </div>
   </form>
 
-  <div *ngIf="auth.hasPermission('SEARCH_MACHINE')">
-    <table class="table" *ngIf="results?.length; else noResults">
-      <thead>
-      <tr>
-        <th>Naziv</th>
-        <th>Tip</th>
-        <th>Opis</th>
-        <th>Vlasnik (ID)</th>
-        <th>Kreirana</th>
-        <th>Power</th>
-        <th>State</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let m of results">
-        <td>{{ m.name }}</td>
-        <td>{{ m.type || '—' }}</td>
-        <td>{{ m.description || '—' }}</td>
-        <td>{{ m.ownerUserId }}</td>
-        <td>{{ m.createdAt | date:'short' }}</td>
-        <td>{{ m.power }}</td>
-        <td>{{ m.state }}</td>
-      </tr>
-      </tbody>
-    </table>
+  <!-- prikaz rezultata pretrage-->
+    <div *ngIf="auth.hasPermission('SEARCH_MACHINE')">
+      <table class="table" *ngIf="results?.length; else noResults">
+        <thead>
+        <tr>
+          <th>Naziv</th>
+          <th>Tip</th>
+          <th>Opis</th>
+          <th>Vlasnik (ID)</th>
+          <th>Kreirana</th>
+          <th>Stanje</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let m of results">
+          <td>{{ m.name }}</td>
+          <td>{{ m.type || '—' }}</td>
+          <td>{{ m.description || '—' }}</td>
+          <td>{{ m.ownerUserId }}</td>
+          <td>{{ m.createdAt | date:'short' }}</td>
+          <td>{{ m.state }}</td>
 
-    <ng-template #noResults>
-      <div class="no-results">Nema rezultata za zadate filtere.</div>
-    </ng-template>
+          <td class="text-end">
+            <button class="btn btn-sm btn-primary me-1">
+              Start
+            </button>
+
+            <button class="btn btn-sm btn-primary me-1">
+              Stop
+            </button>
+
+            <button class="btn btn-sm btn-primary me-1">
+              Restart
+            </button>
+
+            <button class="btn btn-sm btn-outline-danger">
+              Destroy
+            </button>
+          </td>
+
+        </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noResults>
+        <div class="no-results">Nema rezultata za zadate filtere.</div>
+      </ng-template>
+    </div>
   </div>
-</div>

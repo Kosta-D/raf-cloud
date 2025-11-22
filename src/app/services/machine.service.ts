@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Machine, MachineState, PowerState } from '../models/machine.model';
+import { Machine, MachineState } from '../models/machine.model';
 
 export interface MachineSearchOptions {
   name?: string;
@@ -17,34 +17,35 @@ export class MachineService {
     {
       id: 1, name: 'Alpha', description: 'Build node', ownerUserId: 1,
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
-      active: true, state: 'Slobodna', power: 'Ugašena', type: 'Build'
+      active: true, state: 'Ugašena', type: 'Build'
     },
     {
       id: 2, name: 'Beta', description: 'DB server', ownerUserId: 2,
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
-      active: true, state: 'Zauzeta', power: 'Upaljena', type: 'Database'
+      active: true, state: 'Upaljena', type: 'Database'
     },
     {
       id: 3, name: 'Gamma', description: 'CI runner', ownerUserId: 1,
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
-      active: true, state: 'Slobodna', power: 'Ugašena', type: 'CI'
+      active: true, state: 'Ugašena', type: 'CI'
     },
     {
       id: 4, name: 'Delta', description: 'Cache node', ownerUserId: 3,
       createdAt: new Date().toISOString(),
-      active: true, state: 'Zauzeta', power: 'Upaljena', type: 'Cache'
+      active: true, state: 'Upaljena', type: 'Cache'
     },
     {
       id: 5, name: 'Epsilon', description: 'Analytics', ownerUserId: 2,
       createdAt: new Date().toISOString(),
-      active: true, state: 'Slobodna', power: 'Ugašena', type: 'Analytics'
+      active: true, state: 'Ugašena', type: 'Analytics'
     },
     {
       id: 6, name: 'Zeta', description: 'Dev VM', ownerUserId: 1,
       createdAt: new Date().toISOString(),
-      active: true, state: 'Slobodna', power: 'Ugašena', type: 'Dev'
+      active: true, state: 'Ugašena', type: 'Dev'
     }
   ];
+
 
 
   getAll(): Machine[] {
@@ -64,8 +65,7 @@ export class MachineService {
       ownerUserId,
       createdAt: new Date().toISOString(),
       active: true,
-      state: 'Slobodna',
-      power: 'Ugašena'
+      state: 'Ugašena'
     };
     this.machines.push(newItem);
     return newItem;
@@ -96,6 +96,8 @@ export class MachineService {
       if (states && states.length > 0 && !states.includes(m.state)) return false;
       if (fromDate && new Date(m.createdAt) < fromDate) return false;
       if (toDate && new Date(m.createdAt) > toDate) return false;
+
+
 
       return true;
     });

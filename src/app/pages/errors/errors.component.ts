@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+  import { Component, OnInit } from '@angular/core';
 import { ErrorLog } from '../../models/error-log.model';
 import { Machine } from '../../models/machine.model';
 import { ErrorLogService } from '../../services/error-log.service';
