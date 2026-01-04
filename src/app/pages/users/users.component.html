@@ -1,15 +1,19 @@
 <div class="users-container">
-  <h2> Spisak korisnika</h2>
+  <h2>Spisak korisnika</h2>
 
   <div class="add-user-btn" *ngIf="authService.hasPermission('CREATE_USER')">
-    <button (click)="goToAddUser()" class="add-btn">Додај новог</button>
+    <button (click)="goToAddUser()" class="add-btn">Dodaj novog korisnika</button>
   </div>
 
   <div *ngIf="!authService.hasPermission('READ_USER')" class="no-access">
     <p>Nemate dozvolu za prikaz korisnika.</p>
   </div>
 
-  <table *ngIf="authService.hasPermission('READ_USER')">
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <table *ngIf="authService.hasPermission('READ_USER') && users.length > 0">
     <thead>
     <tr>
       <th>Ime</th>
@@ -19,12 +23,14 @@
       <th>Akcije</th>
     </tr>
     </thead>
+
     <tbody>
     <tr *ngFor="let user of users">
       <td>{{ user.firstName }}</td>
       <td>{{ user.lastName }}</td>
       <td>{{ user.email }}</td>
       <td>{{ user.permissions.join(', ') }}</td>
+
       <td class="actions">
         <button
           class="edit-btn"
@@ -37,10 +43,17 @@
           class="delete-btn"
           *ngIf="authService.hasPermission('DELETE_USER')"
           (click)="deleteUser(user.id)">
-          Obrisi
+          Obriši
         </button>
       </td>
     </tr>
     </tbody>
   </table>
+
+  <!-- Nema korisnika u sistemu -->
+  <div
+    *ngIf="authService.hasPermission('READ_USER') && users.length === 0 && !errorMessage"
+    class="empty">
+    <p>Nema korisnika za prikaz.</p>
+  </div>
 </div>

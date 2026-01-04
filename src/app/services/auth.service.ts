@@ -1,39 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from './user.service';
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthService {
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
+type LoginResponse = { token: string; permissions: string[] };
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
   private readonly TOKEN_KEY = 'authToken';
   private readonly USER_KEY = 'loggedUser';
 
-  constructor(private router: Router,
-              private userService: UserService
-  ) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
-  login(email: string, password: string): boolean {
-    const user = this.userService.getUsers().find(
-      u => u.email === email && u.password === password
-    );
-    if (user) {
-      const token = 'fake-jwt-token';
-      localStorage.setItem(this.TOKEN_KEY, token);
-      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-      return true;
-    }
-
-    return false;
-/*
-    if (email === 'admin@example.com' && password === 'admin123') {
-      const token = 'fake-jwt-token';
-      const user = { email, permissions: ['CREATE_USER', 'READ_USER', 'UPDATE_USER', 'DELETE_USER'] };
-      localStorage.setItem(this.TOKEN_KEY, token);
-      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-      return true;
-    }
-    return false;*/
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, { email, password })
+      .pipe(tap(res => {
+        localStorage.setItem(this.TOKEN_KEY, res.token);
+        // čuvamo “ulogovanog” minimalno (email + permissions)
+        localStorage.setItem(this.USER_KEY, JSON.stringify({ email, permissions: res.permissions }));
+      }));
   }
 
   logout(): void {
@@ -46,7 +33,6 @@ export class AuthService {
     return !!localStorage.getItem(this.TOKEN_KEY);
   }
 
-
   getLoggedUser(): any {
     const user = localStorage.getItem(this.USER_KEY);
     return user ? JSON.parse(user) : null;
@@ -54,8 +40,6 @@ export class AuthService {
 
   hasPermission(permission: string): boolean {
     const user = this.getLoggedUser();
-    if (!user || !user.permissions) return false;
-    return user.permissions.includes(permission);
+    return !!user?.permissions?.includes(permission);
   }
-
 }

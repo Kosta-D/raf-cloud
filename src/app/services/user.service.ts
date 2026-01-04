@@ -1,60 +1,49 @@
 import { Injectable } from '@angular/core';
-import { User, Permission } from '../models/user.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+export type UserResponse = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  permissions: string[];
+};
+
+export type CreateUserRequest = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  permissions: string[];
+};
+
+export type UpdateUserRequest = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password?: string;
+  permissions: string[];
+};
+
+@Injectable({ providedIn: 'root' })
 export class UserService {
+  constructor(private http: HttpClient) {}
 
-  private users: User[] = [
-    {
-      id: 1,
-      firstName: 'Kosta',
-      lastName: 'Dopudja',
-      email: 'kosta@example.com',
-      password: '12345',
-      permissions: ['READ_USER', 'CREATE_USER', 'UPDATE_USER', 'DELETE_USER', 'SEARCH_MACHINE', 'CREATE_MACHINE']
-
-    },
-    {
-      id: 2,
-      firstName: 'Mina',
-      lastName: 'Protic',
-      email: 'mina@example.com',
-      password: '54321',
-      permissions: ['READ_USER']
-    },
-    {
-      id: 3,
-      firstName: 'Andrej',
-      lastName: 'Dasic',
-      email: 'andrej@example.com',
-      password: '11111',
-      permissions: ['READ_USER', 'UPDATE_USER']
-    }
-  ];
-
-  getUsers(): User[] {
-    return this.users;
+  getAll(): Observable<UserResponse[]> {
+    return this.http.get<UserResponse[]>(`${environment.apiUrl}/users`);
   }
 
-  getUserById(id: number): User | undefined {
-    return this.users.find(u => u.id === id);
+  create(req: CreateUserRequest): Observable<UserResponse> {
+    return this.http.post<UserResponse>(`${environment.apiUrl}/users`, req);
   }
 
-  addUser(user: User): void {
-    user.id = this.users.length + 1;
-    this.users.push(user);
+  update(id: number, req: UpdateUserRequest): Observable<UserResponse> {
+    return this.http.put<UserResponse>(`${environment.apiUrl}/users/${id}`, req);
   }
 
-  updateUser(id: number, updatedUser: User): void {
-    const index = this.users.findIndex(u => u.id === id);
-    if (index !== -1) {
-      this.users[index] = { ...updatedUser, id };
-    }
-  }
-
-  deleteUser(id: number): void {
-    this.users = this.users.filter(u => u.id !== id);
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/users/${id}`);
   }
 }

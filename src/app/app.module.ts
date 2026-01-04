@@ -10,6 +10,8 @@ import { UsersComponent } from './pages/users/users.component';
 import { UserFormComponent } from './pages/user-form/user-form.component';
 import {FormsModule} from "@angular/forms";
 import {MachineFormComponent} from "./pages/machine-form/machine-form.component";
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -24,9 +26,12 @@ import {MachineFormComponent} from "./pages/machine-form/machine-form.component"
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

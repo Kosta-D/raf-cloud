@@ -12,14 +12,21 @@ export class LoginComponent {
   password: string = '';
   errorMessage: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   onLogin(): void {
-    const success = this.authService.login(this.email, this.password);
-    if (success) {
-      this.router.navigate(['/users']);
-    } else {
-      this.errorMessage = 'Погрешан имејл или лозинка!';
-    }
+    this.errorMessage = '';
+
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        this.router.navigate(['/users']);
+      },
+      error: () => {
+        this.errorMessage = 'pogresan imejl ili lozinka!';
+      }
+    });
   }
 }
