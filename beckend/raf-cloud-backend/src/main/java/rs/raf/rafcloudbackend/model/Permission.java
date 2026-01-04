@@ -1,0 +1,19 @@
+package rs.raf.rafcloudbackend.model;
+
+public enum Permission {
+  READ_USER,
+  CREATE_USER,
+  UPDATE_USER,
+  DELETE_USER,
+
+  SEARCH_MACHINE,
+  CREATE_MACHINE,
+  START_MACHINE,
+  STOP_MACHINE,
+  RESTART_MACHINE,
+  DESTROY_MACHINE,
+
+  SCHEDULE_OPERATION,
+  VIEW_ERROR_LOGS
+
+}
