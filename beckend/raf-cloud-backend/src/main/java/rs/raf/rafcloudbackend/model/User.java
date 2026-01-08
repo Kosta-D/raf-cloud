@@ -109,4 +109,12 @@ public class User {
   public void setPermissions(Set<Permission> permissions) {
     this.permissions = (permissions != null) ? permissions : new HashSet<>();
   }
+
+  public Long getVersion() {
+    return version;
+  }
+
+  public void setVersion(Long version) {
+    this.version = version;
+  }
 }

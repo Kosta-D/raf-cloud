@@ -51,7 +51,7 @@ public class UserService {
     if (!u.getEmail().equals(req.getEmail()) && userRepository.existsByEmail(req.getEmail())) {
       throw new RuntimeException("Email already exists");
     }
-
+    u.setVersion(req.getVersion());
     u.setFirstName(req.getFirstName());
     u.setLastName(req.getLastName());
     u.setEmail(req.getEmail());
@@ -77,6 +77,6 @@ public class UserService {
       .map(Enum::name)
       .collect(Collectors.toSet());
 
-    return new UserResponse(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(), perms);
+    return new UserResponse(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(), perms, u.getVersion());
   }
 }

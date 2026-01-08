@@ -42,4 +42,12 @@ public class UpdateUserRequest {
 
   public Set<Permission> getPermissions() { return permissions; }
   public void setPermissions(Set<Permission> permissions) { this.permissions = permissions; }
+
+  public Long getVersion() {
+    return version;
+  }
+
+  public void setVersion(Long version) {
+    this.version = version;
+  }
 }

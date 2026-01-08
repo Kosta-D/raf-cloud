@@ -17,12 +17,13 @@ public class UserResponse {
 
   public UserResponse() {}
 
-  public UserResponse(Long id, String firstName, String lastName, String email, Set<String> permissions) {
+  public UserResponse(Long id, String firstName, String lastName, String email, Set<String> permissions, Long version) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.permissions = permissions;
+    this.version = version;
   }
 
   public Long getId() { return id; }
