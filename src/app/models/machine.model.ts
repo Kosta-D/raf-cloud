@@ -7,7 +7,12 @@ export type MachinePermission =
   | 'RESTART_MACHINE'
   | 'DESTROY_MACHINE';
 
-export type MachineState = 'Upaljena' | 'Ugašena';
+export type MachineState =
+  | 'STOPPED'
+  | 'RUNNING'
+  | 'STARTING'
+  | 'STOPPING'
+  | 'RESTARTING';
 
 
 export interface Machine {

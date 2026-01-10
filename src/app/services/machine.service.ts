@@ -1,106 +1,92 @@
 import { Injectable } from '@angular/core';
-import { Machine, MachineState } from '../models/machine.model';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Machine } from '../models/machine.model';
+import { environment } from '../environments/environment';
 
-export interface MachineSearchOptions {
-  name?: string;
-  type?: string; // za tip masine
-  states?: MachineState[];
-  from?: string;
-  to?: string;
-  ownerUserId?: number;
-  isAdmin?: boolean;
-}
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class MachineService {
-  private machines: Machine[] = [
-    {
-      id: 1, name: 'Alpha', description: 'Build node', ownerUserId: 1,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
-      active: true, state: 'Ugašena', type: 'Build'
-    },
-    {
-      id: 2, name: 'Beta', description: 'DB server', ownerUserId: 2,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
-      active: true, state: 'Upaljena', type: 'Database'
-    },
-    {
-      id: 3, name: 'Gamma', description: 'CI runner', ownerUserId: 1,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
-      active: true, state: 'Ugašena', type: 'CI'
-    },
-    {
-      id: 4, name: 'Delta', description: 'Cache node', ownerUserId: 3,
-      createdAt: new Date().toISOString(),
-      active: true, state: 'Upaljena', type: 'Cache'
-    },
-    {
-      id: 5, name: 'Epsilon', description: 'Analytics', ownerUserId: 2,
-      createdAt: new Date().toISOString(),
-      active: true, state: 'Ugašena', type: 'Analytics'
-    },
-    {
-      id: 6, name: 'Zeta', description: 'Dev VM', ownerUserId: 1,
-      createdAt: new Date().toISOString(),
-      active: true, state: 'Ugašena', type: 'Dev'
+
+  private readonly apiUrl = `${environment.apiUrl}/machines`;
+
+  constructor(private http: HttpClient) {}
+
+  // ======================
+  // PRETRAGA MAŠINA
+  // ======================
+  searchMachines(filters: {
+    name?: string;
+    type?: string;
+    from?: string;
+    to?: string;
+    states?: string[];
+  }): Observable<Machine[]> {
+
+    let params = new HttpParams();
+
+    if (filters.name) {
+      params = params.set('name', filters.name);
     }
-  ];
 
+    if (filters.type) {
+      params = params.set('type', filters.type);
+    }
 
+    if (filters.from) {
+      params = params.set('from', filters.from);
+    }
 
-  getAll(): Machine[] {
-    return [...this.machines];
+    if (filters.to) {
+      params = params.set('to', filters.to);
+    }
+
+    if (filters.states && filters.states.length > 0) {
+      filters.states.forEach(state => {
+        params = params.append('states', state);
+      });
+    }
+
+    return this.http.get<Machine[]>(this.apiUrl, { params });
   }
 
-  getById(id: number): Machine | undefined {
-    return this.machines.find(m => m.id === id);
-  }
-
-  create(name: string, ownerUserId: number, description = ''): Machine {
-    const nextId = this.machines.length ? Math.max(...this.machines.map(m => m.id)) + 1 : 1;
-    const newItem: Machine = {
-      id: nextId,
-      name: name.trim(),
-      description,
-      ownerUserId,
-      createdAt: new Date().toISOString(),
-      active: true,
-      state: 'Ugašena'
-    };
-    this.machines.push(newItem);
-    return newItem;
-  }
-
-  update(partial: Partial<Machine> & { id: number }): Machine | undefined {
-    const idx = this.machines.findIndex(m => m.id === partial.id);
-    if (idx === -1) return undefined;
-    this.machines[idx] = { ...this.machines[idx], ...partial };
-    return this.machines[idx];
-  }
-
-
-
-  search(opts: MachineSearchOptions = {}): Machine[] {
-    const { name, type, states, from, to, ownerUserId, isAdmin } = opts;
-    const fromDate = from ? new Date(from) : undefined;
-    const toDate   = to   ? new Date(to)   : undefined;
-
-    return this.machines.filter(m => {
-      if (!m.active) return false;
-      if (!isAdmin && ownerUserId != null && m.ownerUserId !== ownerUserId) return false;
-
-      if (name && !m.name.toLowerCase().includes(name.toLowerCase())) return false;
-
-      if (type && !(m.type ?? '').toLowerCase().includes(type.toLowerCase())) return false; // ⬅️ NOVO
-
-      if (states && states.length > 0 && !states.includes(m.state)) return false;
-      if (fromDate && new Date(m.createdAt) < fromDate) return false;
-      if (toDate && new Date(m.createdAt) > toDate) return false;
-
-
-
-      return true;
+  // ======================
+  // KREIRANJE MAŠINE (BITNO!)
+  // ======================
+  create(machine: Partial<Machine>, userId: number): Observable<Machine> {
+    return this.http.post<Machine>(this.apiUrl, {
+      ...machine,
+      ownerUserId: userId
     });
   }
 
+  // (ostavljamo i ovu ako je koristiš negde drugde)
+  createMachine(payload: {
+    name: string;
+    description?: string;
+    type?: string;
+  }): Observable<Machine> {
+    return this.http.post<Machine>(this.apiUrl, payload);
+  }
+
+  getAll(): Observable<Machine[]> {
+    return this.http.get<Machine[]>(this.apiUrl);
+  }
+
+  startMachine(id: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${id}/start`, {});
+  }
+
+  stopMachine(id: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${id}/stop`, {});
+  }
+
+  restartMachine(id: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${id}/restart`, {});
+  }
+
+  deleteMachine(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

@@ -1,4 +1,3 @@
-
 <div class="machines">
   <h2>Pretraga mašina</h2>
 
@@ -7,24 +6,39 @@
     Nemate dozvolu da pretražujete mašine.
   </div>
 
-  <!-- forma za pretragu mašina -->
-  <form *ngIf="auth.hasPermission('SEARCH_MACHINE')" (ngSubmit)="search()" class="filters">
+  <!-- Forma za pretragu -->
+  <form
+    *ngIf="auth.hasPermission('SEARCH_MACHINE')"
+    (ngSubmit)="search()"
+    class="filters">
+
     <div class="row">
       <label>
         Naziv:
-        <input type="text" [(ngModel)]="name" name="name" placeholder="npr. Alpha" />
+        <input
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          placeholder="npr. Alpha" />
       </label>
 
       <label>
         Tip:
-        <input type="text" [(ngModel)]="type" name="type" placeholder="npr. Database" />
+        <input
+          type="text"
+          [(ngModel)]="type"
+          name="type"
+          placeholder="npr. Database" />
       </label>
 
       <div class="states">
         <span>Stanje:</span>
         <label *ngFor="let s of stateChoices" class="state-item">
-          <input type="checkbox" [(ngModel)]="stateSelection[s]" name="state_{{s}}" />
-          {{ s }}
+          <input
+            type="checkbox"
+            [(ngModel)]="stateSelection[s]"
+            name="state_{{ s }}" />
+          {{ getStateLabel(s) }}
         </label>
       </div>
     </div>
@@ -32,67 +46,104 @@
     <div class="row">
       <label>
         Od datuma:
-        <input type="date" [(ngModel)]="from" name="from" />
+        <input
+          type="date"
+          [(ngModel)]="from"
+          name="from" />
       </label>
 
       <label>
         Do datuma:
-        <input type="date" [(ngModel)]="to" name="to" />
+        <input
+          type="date"
+          [(ngModel)]="to"
+          name="to" />
       </label>
     </div>
 
     <div class="actions">
-      <button type="submit">Pretraži</button>
-      <button type="button" (click)="clearFilters()">Očisti filtere</button>
+      <button type="submit" class="btn btn-primary">
+        Pretraži
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="clearFilters()">
+        Očisti filtere
+      </button>
     </div>
   </form>
 
-  <!-- prikaz rezultata pretrage-->
-    <div *ngIf="auth.hasPermission('SEARCH_MACHINE')">
-      <table class="table" *ngIf="results?.length; else noResults">
-        <thead>
-        <tr>
-          <th>Naziv</th>
-          <th>Tip</th>
-          <th>Opis</th>
-          <th>Vlasnik (ID)</th>
-          <th>Kreirana</th>
-          <th>Stanje</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let m of results">
-          <td>{{ m.name }}</td>
-          <td>{{ m.type || '—' }}</td>
-          <td>{{ m.description || '—' }}</td>
-          <td>{{ m.ownerUserId }}</td>
-          <td>{{ m.createdAt | date:'short' }}</td>
-          <td>{{ m.state }}</td>
+  <!-- Rezultati -->
+  <div *ngIf="auth.hasPermission('SEARCH_MACHINE')">
+    <table class="table table-striped" *ngIf="results?.length; else noResults">
+      <thead>
+      <tr>
+        <th>Naziv</th>
+        <th>Tip</th>
+        <th>Opis</th>
+        <th>Vlasnik (ID)</th>
+        <th>Kreirana</th>
+        <th>Stanje</th>
+        <th class="text-end">Akcije</th>
+      </tr>
+      </thead>
 
-          <td class="text-end">
-            <button class="btn btn-sm btn-primary me-1">
-              Start
-            </button>
+      <tbody>
+      <tr *ngFor="let m of results">
+        <td>{{ m.name }}</td>
+        <td>{{ m.type || '—' }}</td>
+        <td>{{ m.description || '—' }}</td>
+        <td>{{ m.ownerUserId }}</td>
+        <td>{{ m.createdAt | date:'short' }}</td>
+        <td>{{ getStateLabel(m.state) }}</td>
 
-            <button class="btn btn-sm btn-primary me-1">
-              Stop
-            </button>
+        <td class="text-end">
 
-            <button class="btn btn-sm btn-primary me-1">
-              Restart
-            </button>
+          <!-- START -->
+          <button
+            class="btn btn-sm btn-success me-1"
+            *ngIf="auth.hasPermission('START_MACHINE')"
+            [disabled]="m.state !== 'STOPPED'"
+            (click)="start(m)">
+            Start
+          </button>
 
-            <button class="btn btn-sm btn-outline-danger">
-              Destroy
-            </button>
-          </td>
+          <!-- STOP -->
+          <button
+            class="btn btn-sm btn-warning me-1"
+            *ngIf="auth.hasPermission('STOP_MACHINE')"
+            [disabled]="m.state !== 'RUNNING'"
+            (click)="stop(m)">
+            Stop
+          </button>
 
-        </tr>
-        </tbody>
-      </table>
+          <!-- RESTART -->
+          <button
+            class="btn btn-sm btn-info me-1"
+            *ngIf="auth.hasPermission('RESTART_MACHINE')"
+            [disabled]="m.state !== 'RUNNING'"
+            (click)="restart(m)">
+            Restart
+          </button>
 
-      <ng-template #noResults>
-        <div class="no-results">Nema rezultata za zadate filtere.</div>
-      </ng-template>
-    </div>
+          <!-- DESTROY -->
+          <button
+            class="btn btn-sm btn-outline-danger"
+            *ngIf="auth.hasPermission('DESTROY_MACHINE')"
+            (click)="destroy(m)">
+            Destroy
+          </button>
+
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noResults>
+      <div class="no-results">
+        Nema rezultata za zadate filtere.
+      </div>
+    </ng-template>
   </div>
+</div>

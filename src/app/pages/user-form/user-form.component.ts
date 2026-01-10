@@ -22,8 +22,10 @@ export class UserFormComponent implements OnInit {
     lastName: '',
     email: '',
     password: '',
-    permissions: [] as string[]
+    permissions: [] as string[],
+    version: null as number | null
   };
+
 
   allPermissions: string[] = [
     'READ_USER', 'CREATE_USER', 'UPDATE_USER', 'DELETE_USER',
@@ -64,6 +66,7 @@ export class UserFormComponent implements OnInit {
         this.user.email = existingUser.email;
         this.user.permissions = existingUser.permissions ?? [];
         this.user.password = ''; // ne popunjavamo password
+        this.user.version = existingUser.version ?? null;
       },
       error: (err) => {
         if (err?.status === 401) this.errorMessage = 'Nije prijavljan (401).';
@@ -84,6 +87,7 @@ export class UserFormComponent implements OnInit {
   saveUser(): void {
     this.errorMessage = '';
 
+    // Osnovne validacije
     if (!this.user.firstName || !this.user.lastName || !this.user.email) {
       this.errorMessage = 'Ime, prezime i imejl su obavezni.';
       return;
@@ -99,45 +103,60 @@ export class UserFormComponent implements OnInit {
       return;
     }
 
-    if (this.isEditMode && this.userId != null) {
+    // EDIT
+    if (this.isEditMode) {
+      if (this.userId == null) {
+        this.errorMessage = 'Nedostaje ID korisnika za izmenu.';
+        return;
+      }
+
+      if ((this.user as any).version == null) {
+        this.errorMessage = 'Nedostaje version za korisnika (backend mora da vrati version).';
+        return;
+      }
+
       const req: UpdateUserRequest = {
         firstName: this.user.firstName,
         lastName: this.user.lastName,
         email: this.user.email,
         permissions: this.user.permissions,
+        version: (this.user as any).version,
         ...(this.user.password ? { password: this.user.password } : {})
       };
 
       this.userService.update(this.userId, req).subscribe({
         next: () => this.router.navigate(['/users']),
         error: (err) => {
-          if (err?.status === 401) this.errorMessage = 'Nisi prijavljen (401).';
-          else if (err?.status === 403) this.errorMessage = 'Nemas dozvolu za izmenu (403).';
-          else if (err?.status === 409) this.errorMessage = 'Imejl vec postoji (409).';
-          else this.errorMessage = 'Greska pri azuriranju korisnika.';
-        }
-      });
-
-    } else {
-      const req: CreateUserRequest = {
-        firstName: this.user.firstName,
-        lastName: this.user.lastName,
-        email: this.user.email,
-        password: this.user.password,
-        permissions: this.user.permissions
-      };
-
-      this.userService.create(req).subscribe({
-        next: () => this.router.navigate(['/users']),
-        error: (err) => {
           if (err?.status === 401) this.errorMessage = 'Nisi prijavljan (401).';
-          else if (err?.status === 403) this.errorMessage = 'Nemas dozvolu za kreiranje (403).';
-          else if (err?.status === 409) this.errorMessage = 'Imejl vec postoji (409).';
-          else this.errorMessage = 'Greska pri kreiranju korisnika.';
+          else if (err?.status === 403) this.errorMessage = 'Nemas dozvolu za izmenu (403).';
+          else if (err?.status === 409) this.errorMessage = 'Konflikt (409): imejl već postoji ili je korisnik izmenjen u međuvremenu.';
+          else this.errorMessage = 'Greska pri izmeni korisnika.';
         }
       });
+
+      return;
     }
+
+    // CREATE
+    const req: CreateUserRequest = {
+      firstName: this.user.firstName,
+      lastName: this.user.lastName,
+      email: this.user.email,
+      password: this.user.password,
+      permissions: this.user.permissions
+    };
+
+    this.userService.create(req).subscribe({
+      next: () => this.router.navigate(['/users']),
+      error: (err) => {
+        if (err?.status === 401) this.errorMessage = 'Nisi prijavljan (401).';
+        else if (err?.status === 403) this.errorMessage = 'Nemas dozvolu za kreiranje (403).';
+        else if (err?.status === 409) this.errorMessage = 'Imejl vec postoji (409).';
+        else this.errorMessage = 'Greska pri kreiranju korisnika.';
+      }
+    });
   }
+
 
   cancel(): void {
     this.router.navigate(['/users']);

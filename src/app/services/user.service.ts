@@ -9,6 +9,7 @@ export type UserResponse = {
   lastName: string;
   email: string;
   permissions: string[];
+  version: number;
 };
 
 export type CreateUserRequest = {
@@ -25,6 +26,7 @@ export type UpdateUserRequest = {
   email: string;
   password?: string;
   permissions: string[];
+  version: number;
 };
 
 @Injectable({ providedIn: 'root' })

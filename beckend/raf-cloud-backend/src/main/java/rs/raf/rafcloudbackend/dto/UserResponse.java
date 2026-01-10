@@ -1,23 +1,20 @@
 package rs.raf.rafcloudbackend.dto;
 
-
-import jakarta.persistence.Version;
-
 import java.util.Set;
 
 public class UserResponse {
+
   private Long id;
   private String firstName;
   private String lastName;
   private String email;
   private Set<String> permissions;
-
-  @Version
   private Long version;
 
   public UserResponse() {}
 
-  public UserResponse(Long id, String firstName, String lastName, String email, Set<String> permissions, Long version) {
+  public UserResponse(Long id, String firstName, String lastName, String email,
+                      Set<String> permissions, Long version) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -40,4 +37,7 @@ public class UserResponse {
 
   public Set<String> getPermissions() { return permissions; }
   public void setPermissions(Set<String> permissions) { this.permissions = permissions; }
+
+  public Long getVersion() { return version; }
+  public void setVersion(Long version) { this.version = version; }
 }

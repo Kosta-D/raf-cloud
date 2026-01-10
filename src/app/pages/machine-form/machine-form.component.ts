@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { MachineService } from '../../services/machine.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -9,28 +8,41 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./machine-form.component.scss']
 })
 export class MachineFormComponent {
-  name = '';
+
+  // 🔹 POLJA KOJA KORISTIŠ U FORMULARU
+  name: string = '';
+  description?: string;
+  type?: string;
 
   constructor(
     private machines: MachineService,
-    public auth: AuthService,
-    private router: Router
+    protected auth: AuthService
   ) {}
 
   submit(): void {
-    if (!this.auth.hasPermission('CREATE_MACHINE')) return;
+    const trimmed: string = this.name?.trim();
 
-    const trimmed = this.name.trim();
     if (!trimmed) {
-      alert('Naziv je obavezan.');
       return;
     }
 
-    const user = this.auth.getLoggedUser();
-    if (!user) return;
+    const user: any = this.auth.getLoggedUser();
+    if (!user) {
+      return;
+    }
 
-    this.machines.create(trimmed, user.id);
-    alert('Mašina je uspešno kreirana (Ugašena / Slobodna).');
-    this.router.navigate(['/machines']);
+    this.machines.createMachine({
+      name: trimmed,
+      description: this.description,
+      type: this.type
+    }).subscribe({
+      next: () => {
+        console.log('Mašina kreirana');
+        this.name = '';
+        this.description = '';
+        this.type = '';
+      },
+      error: err => console.error(err)
+    });
   }
 }

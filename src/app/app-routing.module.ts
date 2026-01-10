@@ -22,7 +22,7 @@ const routes: Routes = [
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
-
+  { path: '', component: MachinesComponent }
 ];
 
 @NgModule({

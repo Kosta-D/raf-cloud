@@ -42,4 +42,10 @@ export class AuthService {
     const user = this.getLoggedUser();
     return !!user?.permissions?.includes(permission);
   }
+
+  isAdmin(): boolean {
+    return this.hasPermission('VIEW_ERROR_LOGS');
+  }
+
+
 }
